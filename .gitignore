@@ -1,0 +1,15 @@
+### Python Environment ###
+myvenv/
+
+### Python ###
+__pycache__/
+
+### JupyterNotebook ###
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+### Scraped data ###
+data/
+
+### Twitter dev details ###
+twitter_dev_config.json
