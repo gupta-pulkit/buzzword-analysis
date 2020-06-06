@@ -4,7 +4,7 @@ Mention a topic, the code will get the tweets related to the topic.
 Later:
 Get the related words to the topic and get the tweets which have both.
 """
-
+import pandas as pd
 import tweepy
 from tweepy import OAuthHandler, API, Stream
 from tweepy.streaming import StreamListener
@@ -16,16 +16,20 @@ class SListener(StreamListener):
         self.count = 0
         self.max_tweets = max_tweets
         self.output  = open('data/tweets.json', 'w')
+        self.tweets = []
 
-    def on_data(self, data):
-        if  'in_reply_to_status' in data:
-            return self.on_status(data)
+    def save(self):
+        self.output.write(json.dumps(self.tweets))
+        self.output.close()
+        df = pd.DataFrame(self.tweets)
+        df.to_csv('data/tweets.csv', index = False)
 
     def on_status(self, status):
-        self.output.write(status)
+        self.tweets.append(status._json)
         self.count += 1
+        print("Getting tweet #{0}".format(self.count))
         if self.count == self.max_tweets:
-            self.output.close()
+            self.save()
             return False
 
         return True
@@ -57,7 +61,7 @@ class TwitterBot:
 
 def main():
     with open('twitter_dev_config.json') as f:
-      dev_config = json.load(f)
+        dev_config = json.load(f)
 
     api_key = dev_config['api_key']
     api_secret_key = dev_config['api_secret_key']
@@ -65,7 +69,7 @@ def main():
     access_token_secret = dev_config['access_token_secret']
 
     bot = TwitterBot(api_key, api_secret_key, access_token, access_token_secret)
-    bot.fetch_data(['python', 'javascript'], max_tweets = 20)
+    bot.fetch_data(['covid', 'corona'], max_tweets = 1000)
 
 if __name__=='__main__':
     main()
