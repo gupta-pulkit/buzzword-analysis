@@ -39,12 +39,18 @@ class SListener(StreamListener):
         return
 
 class TwitterBot:
-    def __init__(self, api_key, api_secret_key, access_token, access_token_secret):
-        self.api_key = api_key
-        self.api_secret_key = api_secret_key
-        self.access_token = access_token
-        self.access_token_secret = access_token_secret
+    def __init__(self, dev_config_path = 'twitter_dev_config.json'):
+        self.configure(dev_config_path)
         (self.auth, self.api) = self.get_api()
+
+    def configure(self, dev_config_path):
+        with open(dev_config_path) as f:
+            dev_config = json.load(f)
+
+        self.api_key = dev_config['api_key']
+        self.api_secret_key = dev_config['api_secret_key']
+        self.access_token = dev_config['access_token']
+        self.access_token_secret = dev_config['access_token_secret']
 
     def get_api(self):
         auth = OAuthHandler(self.api_key, self.api_secret_key)
@@ -60,15 +66,7 @@ class TwitterBot:
         stream.filter(track = keywords)
 
 def main():
-    with open('twitter_dev_config.json') as f:
-        dev_config = json.load(f)
-
-    api_key = dev_config['api_key']
-    api_secret_key = dev_config['api_secret_key']
-    access_token = dev_config['access_token']
-    access_token_secret = dev_config['access_token_secret']
-
-    bot = TwitterBot(api_key, api_secret_key, access_token, access_token_secret)
+    bot = TwitterBot()
     bot.fetch_data(['covid', 'corona'], max_tweets = 1000)
 
 if __name__=='__main__':
