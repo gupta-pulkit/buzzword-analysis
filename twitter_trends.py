@@ -1,9 +1,3 @@
-"""
-Mention a topic, the code will get the tweets related to the topic.
-
-Later:
-Get the related words to the topic and get the tweets which have both.
-"""
 import pandas as pd
 import tweepy
 from tweepy import OAuthHandler, API, Stream
