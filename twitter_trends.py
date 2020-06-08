@@ -9,12 +9,14 @@ class SListener(StreamListener):
         self.api = api
         self.count = 0
         self.max_tweets = max_tweets
-        self.output  = open('data/tweets.json', 'w')
         self.tweets = []
 
     def save(self):
-        self.output.write(json.dumps(self.tweets))
-        self.output.close()
+        #Saving list of dictionary as json.
+        with open('data/tweets.json', 'w') as file:
+            file.write(json.dumps(self.tweets))
+
+        #Saving the data in form of csv.
         df = pd.DataFrame(self.tweets)
         df.to_csv('data/tweets.csv', index = False)
 
